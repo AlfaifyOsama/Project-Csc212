@@ -11,15 +11,13 @@ public class SubtitleIm implements Subtitle{
 	private Time StartTime;
 	private Time EndTime;
 	private String Text;
-	private int sequence; //might not be needed
 	
 	
 	//Constructor
-	public SubtitleIm(Time startTime, Time endTime, String text, int sequence) {
+	public SubtitleIm(Time startTime, Time endTime, String text) {
 		StartTime = startTime;
 		EndTime = endTime;
 		Text = text;
-		this.sequence = sequence;
 	}
 	
 
@@ -53,5 +51,18 @@ public class SubtitleIm implements Subtitle{
 		// TODO Auto-generated method stub
 		return Text;
 	}
+	//for testing
+
+
+
+	@Override
+	public String toString() {
+		return "SubtitleIm [StartTime=" + StartTime + ", EndTime=" + EndTime + ", Text=" + Text + "]";
+	}
+
+	
+
+
+	
 
 }
