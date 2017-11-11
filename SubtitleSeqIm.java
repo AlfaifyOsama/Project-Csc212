@@ -7,46 +7,31 @@ public class SubtitleSeqIm implements SubtitleSeq {
 	}
 
 	public void addSubtitle(Subtitle st) {
-
-		if (sub.full())
-			return;
-		if(st ==null)
-			return;
-		
-		if (sub.empty()) {
-			System.out.println("1");
-			sub.insert(st);
-			return;
-		}
-		sub.findFirst();
-		int at = ((TimeIm) st.getStartTime()).timeToMS();
-		while (!sub.last()) {
-			int ac = ((TimeIm) sub.retrieve().getEndTime()).timeToMS();
-			if (ac <= at) {
-				sub.insert(st);
-				System.out.println("2");
-				return;
+		if(!sub.full()){
+			int addAtIndex = 0;
+			sub.findFirst();
+			while(!sub.last()){
+				int startTimeOfCurrent = ((TimeIm)sub.retrieve().getStartTime()).timeToMS();
+				int startTimeOfSt = ((TimeIm)st.getStartTime()).timeToMS();
+				if(startTimeOfSt < startTimeOfCurrent){
+					break;
+				}
+				addAtIndex++;
 			}
-			sub.findNext();
+			
+			sub.findFirst();
+			if(addAtIndex == 0){ // if it should be added at the first
+				Subtitle tmp = sub.retrieve();
+				sub.update(st);
+				sub.insert(tmp);
+			} else {
+				for (int i = 1; i < addAtIndex; i++) {
+					sub.findNext();
+				}
+				sub.insert(st);
+			}
+			
 		}
-		int ac = ((TimeIm) sub.retrieve().getEndTime()).timeToMS();
-		if (ac <= at) {
-			sub.insert(st);
-			System.out.println("3");
-			return;
-		}
-		System.out.println("4");
-
-			//
-			//// while(((Time1) sub.retrieve().getEndTime()).timeToMS() < &&
-			// !sub.last()){
-			//// sub.findNext();
-			//// }
-			//// if(((Time1) sub.retrieve().getEndTime()).timeToMS() <
-			// given.timeToMS()&& !!sub.empty())
-			//// sub.findNext();
-			//// sub.insert(st);
-		
 	}
 
 	@Override
@@ -68,9 +53,7 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		sub.findFirst(); // need to start from the fist subtitle
 
 		while (!sub.last()) {
-			if (inTime((TimeIm) time)) // returns true if the given time match
-										// the time
-				// in the current
+			if (inTime((TimeIm) time)) // returns true if the given time match the time in the current
 				return sub.retrieve();
 			sub.findNext();
 		}
@@ -128,7 +111,7 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		if (sub.empty())
 			return;
 		sub.findFirst();
-		while (!sub.last()) {
+		while (!sub.last()){
 			if (sub.retrieve().getText().contains(str)) {
 				sub.remove();
 				continue;
