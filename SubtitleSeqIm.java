@@ -7,32 +7,30 @@ public class SubtitleSeqIm implements SubtitleSeq {
 	}
 
 	public void addSubtitle(Subtitle st) {
-		if(sub.empty()){
+		if (sub.empty()) {
 			sub.insert(st);
 			return;
 		}
-		if(!sub.full()){
+		if (!sub.full()) {
 			int addAtIndex = 0;
 			sub.findFirst();
-			int startTimeOfSt = ((TimeIm)st.getStartTime()).timeToMS();
+			int startTimeOfSt = ((TimeIm) st.getStartTime()).timeToMS();
 			int startTimeOfCurrent = 0;
-			while(!sub.last()){
-				startTimeOfCurrent = ((TimeIm)sub.retrieve().getStartTime()).timeToMS();
-				if(startTimeOfSt < startTimeOfCurrent){
+			while (!sub.last()) {
+				startTimeOfCurrent = ((TimeIm) sub.retrieve().getStartTime()).timeToMS();
+				if (startTimeOfSt < startTimeOfCurrent) {
 					break;
 				}
 				addAtIndex++;
 				sub.findNext();
 			}
-			startTimeOfCurrent = ((TimeIm)sub.retrieve().getStartTime()).timeToMS();
-			if(startTimeOfSt > startTimeOfCurrent){
+			startTimeOfCurrent = ((TimeIm) sub.retrieve().getStartTime()).timeToMS();
+			if (startTimeOfSt > startTimeOfCurrent) {
 				addAtIndex++;
 			}
 
-			
-			
 			sub.findFirst();
-			if((addAtIndex == 0)){ // if it should be added at the first
+			if ((addAtIndex == 0)) { // if it should be added at the first
 				Subtitle tmp = sub.retrieve();
 				sub.update(st);
 				sub.insert(tmp);
@@ -42,12 +40,17 @@ public class SubtitleSeqIm implements SubtitleSeq {
 				}
 				sub.insert(st);
 			}
-			
+
 		}
 	}
 
 	@Override
 	public List<Subtitle> getSubtitles() {
+		if (!sub.empty()) { // you can't find first when the list is empty
+			sub.findFirst(); // because of the requirement "Return all subtitles
+								// in their chronological order."
+
+		} // sub.empty must return a list even if the list is empty
 		return sub;
 	}
 
@@ -59,7 +62,8 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		sub.findFirst(); // need to start from the fist subtitle
 
 		while (!sub.last()) {
-			if (inTime((TimeIm) time)) // returns true if the given time match the time in the current
+			if (inTime((TimeIm) time)) // returns true if the given time match
+										// the time in the current
 				return sub.retrieve();
 			sub.findNext();
 		}
@@ -84,9 +88,47 @@ public class SubtitleSeqIm implements SubtitleSeq {
 
 	@Override
 	public List<Subtitle> getSubtitles(Time startTime, Time endTime) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (sub.empty())
+			return sub;
+		LinkedList<Subtitle> subWithOrder = new LinkedList<Subtitle>(); // collection
+		int startTimeOFIntrval = ((TimeIm) startTime).timeToMS();
+		int endTimeOFIntrval = ((TimeIm) endTime).timeToMS();
+
+		sub.findFirst();
+		subWithOrder.findFirst();
+
+		while (!sub.last()) {
+
+			if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
+					&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
+				if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
+						&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
+					if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
+							&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
+						if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
+								&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
+							subWithOrder.insert(sub.retrieve());
+
+			sub.findNext();
+			subWithOrder.findNext();
+		}
+
+		if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
+				&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
+			if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
+					&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
+				if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
+						&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
+					if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
+							&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
+						subWithOrder.insert(sub.retrieve());
+
+		return subWithOrder;
 	}
+	
+
+
 
 	@Override
 	public List<Subtitle> getSubtitles(String str) {
@@ -117,7 +159,7 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		if (sub.empty())
 			return;
 		sub.findFirst();
-		while (!sub.last()){
+		while (!sub.last()) {
 			if (sub.retrieve().getText().contains(str)) {
 				sub.remove();
 				continue;
@@ -185,9 +227,27 @@ public class SubtitleSeqIm implements SubtitleSeq {
 	@Override
 	public void cut(Time startTime, Time endTime) {
 
+		if (sub.empty())
+			return;
+		int startTimeOFIntrval = ((TimeIm) startTime).timeToMS();
+		int endTimeOFIntrval = ((TimeIm) endTime).timeToMS();
+		sub.findFirst();
+		while (!sub.last()) {
+			if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
+					&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval) {
+				sub.remove();
+				continue;
+
+			}
+
+			sub.findNext();
+		}
+		if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
+				&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
+			sub.remove();
+
 	}
 
-	// testing only
 	public void print() {
 		if (sub.empty())
 			return;
@@ -201,23 +261,21 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		System.out.println(a.toString());
 
 	}
-	
-	public static void main(String[] args){
-		SubtitleSeqIm tmp = new SubtitleSeqIm();
-		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,01,000), new TimeIm(00,00,05,000), "PEW"));
-		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,11,000), new TimeIm(00,00,15,000), "Boom"));
-		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,06,000), new TimeIm(00,00,10,000), "PEW"));
-		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,16,000), new TimeIm(00,00,20,000), "PEW"));
-		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,21,000), new TimeIm(00,00,25,000), "Glack"));
 
-		
-		
+	public static void main(String[] args) {
+		SubtitleSeqIm tmp = new SubtitleSeqIm();
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00, 00, 01, 000), new TimeIm(00, 00, 05, 000), "PEW"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00, 00, 06, 000), new TimeIm(00, 00, 10, 000), "PEW"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00, 00, 11, 000), new TimeIm(00, 00, 15, 000), "Boom"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00, 00, 16, 000), new TimeIm(00, 00, 20, 000), "trgdm"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00, 00, 21, 000), new TimeIm(00, 00, 25, 000), "Glack"));
+		tmp.cut(new TimeIm(00, 00, 01, 000), new TimeIm(00, 00, 05, 000));
+
 		sub.findFirst();
 		for (int i = 0; i < 5; i++) {
 			System.out.println(sub.retrieve().getText());
 			sub.findNext();
 		}
-		
-	}
 
+	}
 }

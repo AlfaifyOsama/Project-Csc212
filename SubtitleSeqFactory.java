@@ -46,8 +46,8 @@ public class SubtitleSeqFactory {
 				
 				
 				//add to the subtitleSeq
-				Time startTimeObj = new Time1(Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(3,5)), Integer.parseInt(startTime.substring(6,8)), Integer.parseInt(startTime.substring(9,12)));
-				Time endTimeObj = new Time1(Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(3,5)), Integer.parseInt(endTime.substring(6,8)), Integer.parseInt(endTime.substring(9,12)));
+				Time startTimeObj = new TimeIm(Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(3,5)), Integer.parseInt(startTime.substring(6,8)), Integer.parseInt(startTime.substring(9,12)));
+				Time endTimeObj = new TimeIm(Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(3,5)), Integer.parseInt(endTime.substring(6,8)), Integer.parseInt(endTime.substring(9,12)));
 				SubtitleIm tmp = new SubtitleIm(startTimeObj, endTimeObj, text);
 				seq.addSubtitle(tmp);
 				
