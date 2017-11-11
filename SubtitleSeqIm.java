@@ -1,26 +1,38 @@
 
 public class SubtitleSeqIm implements SubtitleSeq {
-	public LinkedList<Subtitle> sub;
+	public static LinkedList<Subtitle> sub;
 
 	public SubtitleSeqIm() {
 		sub = new LinkedList<Subtitle>();
 	}
 
 	public void addSubtitle(Subtitle st) {
+		if(sub.empty()){
+			sub.insert(st);
+			return;
+		}
 		if(!sub.full()){
 			int addAtIndex = 0;
 			sub.findFirst();
+			int startTimeOfSt = ((TimeIm)st.getStartTime()).timeToMS();
+			int startTimeOfCurrent = 0;
 			while(!sub.last()){
-				int startTimeOfCurrent = ((TimeIm)sub.retrieve().getStartTime()).timeToMS();
-				int startTimeOfSt = ((TimeIm)st.getStartTime()).timeToMS();
+				startTimeOfCurrent = ((TimeIm)sub.retrieve().getStartTime()).timeToMS();
 				if(startTimeOfSt < startTimeOfCurrent){
 					break;
 				}
 				addAtIndex++;
+				sub.findNext();
 			}
+			startTimeOfCurrent = ((TimeIm)sub.retrieve().getStartTime()).timeToMS();
+			if(startTimeOfSt > startTimeOfCurrent){
+				addAtIndex++;
+			}
+
+			
 			
 			sub.findFirst();
-			if(addAtIndex == 0){ // if it should be added at the first
+			if((addAtIndex == 0)){ // if it should be added at the first
 				Subtitle tmp = sub.retrieve();
 				sub.update(st);
 				sub.insert(tmp);
@@ -194,6 +206,24 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		SubtitleIm a = (SubtitleIm) sub.retrieve();
 		System.out.println(a.toString());
 
+	}
+	
+	public static void main(String[] args){
+		SubtitleSeqIm tmp = new SubtitleSeqIm();
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,01,000), new TimeIm(00,00,05,000), "PEW"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,11,000), new TimeIm(00,00,15,000), "Boom"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,06,000), new TimeIm(00,00,10,000), "PEW"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,16,000), new TimeIm(00,00,20,000), "PEW"));
+		tmp.addSubtitle(new SubtitleIm(new TimeIm(00,00,21,000), new TimeIm(00,00,25,000), "Glack"));
+
+		
+		
+		sub.findFirst();
+		for (int i = 0; i < 5; i++) {
+			System.out.println(sub.retrieve().getText());
+			sub.findNext();
+		}
+		
 	}
 
 }
