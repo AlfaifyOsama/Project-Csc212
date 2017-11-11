@@ -48,12 +48,6 @@ public class SubtitleSeqIm implements SubtitleSeq {
 
 	@Override
 	public List<Subtitle> getSubtitles() {
-		// TODO Auto-generated method stub
-		if (!sub.empty()) { // you can't find first when the list is empty
-			sub.findFirst(); // because of the requirement "Return all subtitles
-								// in their chronological order."
-
-		} // sub.empty must return a list even if the list is empty
 		return sub;
 	}
 
