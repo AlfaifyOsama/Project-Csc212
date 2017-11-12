@@ -40,6 +40,7 @@ public class SubtitleSeqFactory {
 				// Check if it is not the last subtitle, then check for break
 				// line
 				if (in.hasNext()) {
+
 					if (!in.nextLine().matches("^\\s*$")) {
 						return null;
 					}
@@ -50,6 +51,7 @@ public class SubtitleSeqFactory {
 				}
 				
 
+
 				// add to the subtitleSeq
 				Time startTimeObj = new TimeIm(Integer.parseInt(startTime.substring(0, 2)),
 						Integer.parseInt(startTime.substring(3, 5)), Integer.parseInt(startTime.substring(6, 8)),
@@ -59,6 +61,7 @@ public class SubtitleSeqFactory {
 						Integer.parseInt(endTime.substring(9, 12)));
 				SubtitleIm tmp = new SubtitleIm(startTimeObj, endTimeObj, text);
 				seq.addSubtitle(tmp);
+
 			}
 		} catch (FileNotFoundException e) {
 			return null;
