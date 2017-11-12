@@ -40,10 +40,17 @@ public class SubtitleSeqFactory {
 				// Check if it is not the last subtitle, then check for break
 				// line
 				if (in.hasNext()) {
-					if (!in.nextLine().equals("")) {
+
+					if (!in.nextLine().matches("^\\s*$")) {
+						return null;
+					}
+				} else { // THIS CHECKS IF THE LAST SUBTITLE HAS A TEXT
+					if(text.equals("")){
 						return null;
 					}
 				}
+				
+
 
 				// add to the subtitleSeq
 				Time startTimeObj = new TimeIm(Integer.parseInt(startTime.substring(0, 2)),
@@ -58,10 +65,13 @@ public class SubtitleSeqFactory {
 			}
 		} catch (FileNotFoundException e) {
 			return null;
-		} catch (Exception e) {
-			return null;
 		}
 		return seq;
 
+	}
+
+	public static void main(String[] args) {
+		SubtitleSeqFactory s = new SubtitleSeqFactory();
+		System.out.println(s.loadSubtitleSeq("/Users/osama/Desktop/test.srt"));
 	}
 }
