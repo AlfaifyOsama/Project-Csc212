@@ -41,7 +41,7 @@ public class SubtitleSeqFactory {
 				// Check if it is not the last subtitle, then check for break
 				// line
 				if (in.hasNext()) {
-					if (!in.nextLine().equals("")) {
+					if (!in.nextLine().matches("^\\s*$")) {
 						return null;
 					}
 				} else { // THIS CHECKS IF THE LAST SUBTITLE HAS A TEXT
@@ -70,6 +70,6 @@ public class SubtitleSeqFactory {
 
 	public static void main(String[] args) {
 		SubtitleSeqFactory s = new SubtitleSeqFactory();
-		System.out.println(s.loadSubtitleSeq("/Users/osama/Desktop/test.txt"));
+		System.out.println(s.loadSubtitleSeq("/Users/osama/Desktop/test.srt"));
 	}
 }
