@@ -1,6 +1,8 @@
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SubtitleSeqFactory {
 
@@ -14,43 +16,50 @@ public class SubtitleSeqFactory {
 	public static SubtitleSeq loadSubtitleSeq(String fileName) {
 		SubtitleSeqIm seq = new SubtitleSeqIm();
 		int seqNum = 1;
-		String pattern = "^\\d{2}+[:]+\\d{2}+[:]+\\d{2}+[,]+\\d{3}+ --> +\\d{2}+[:]+\\d{2}+[:]+\\d{2}+[,]+\\d{3}$";
+		String timeLinePattern = "(^(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d[,]\\d{3} --> (?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d[,]\\d{3}$)";
+		String line = null;
+		String timeLine, startTime = null, endTime = null;
+		boolean flag = false;
 		try {
-			Scanner in = new Scanner(new File(fileName));
-			while (in.hasNext()) {
-
-				// Check if it has valid sequential number
-				String seqNumString = in.nextLine();
-				if (!seqNumString.equals("" + seqNum++)) {
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			while (((line = br.readLine()) != null)) { // .equals("")
+				flag = false;
+				String text = "";
+				if(line.trim().isEmpty()){
 					return null;
 				}
-
-				// Check if it has valid time pattern
-				String time = in.nextLine();
-				if (!time.matches(pattern)) {
+				if (Integer.parseInt(line) == seqNum) {
+					seqNum++;
+					if ((line = br.readLine()).matches(timeLinePattern)) {
+						timeLine = line;
+						if ((!(line = br.readLine()).equals(""))) {
+							text += line;
+							String last = line;
+							try {
+								while (!(line = br.readLine()).equals("")) {
+									text += "\n";
+									text += line;
+									last = line;
+								}
+								if(line.trim().isEmpty()){
+									flag = true;
+								}
+							} catch (NullPointerException e) {
+								// this allow the last subtitle to have multiple
+								// text lines.
+							}
+						} else {
+							return null;
+						}
+					} else {
+						return null;
+					}
+				} else {
 					return null;
 				}
-				String[] timeArray = time.split(" ");
-				String startTime = timeArray[0];
-				String endTime = timeArray[2];
-
-				// Skip text line
-				String text = in.nextLine();
-
-				// Check if it is not the last subtitle, then check for break
-				// line
-				if (in.hasNext()) {
-
-					if (!in.nextLine().matches("^\\s*$")) {
-						return null;
-					}
-				} else { // THIS CHECKS IF THE LAST SUBTITLE HAS A TEXT
-					if(text.equals("")){
-						return null;
-					}
-				}
-				
-
+				String[] timeArray = timeLine.split(" ");
+				startTime = timeArray[0];
+				endTime = timeArray[2];
 
 				// add to the subtitleSeq
 				Time startTimeObj = new TimeIm(Integer.parseInt(startTime.substring(0, 2)),
@@ -61,17 +70,35 @@ public class SubtitleSeqFactory {
 						Integer.parseInt(endTime.substring(9, 12)));
 				SubtitleIm tmp = new SubtitleIm(startTimeObj, endTimeObj, text);
 				seq.addSubtitle(tmp);
-
 			}
+
 		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		} catch (NullPointerException e) {
+
+		}
+
+		if (seq.getSubtitles().empty()) {
+			return null; // if first line of file is empty this will handle it
+		}
+		if(flag){ // if last line is empty return null
 			return null;
 		}
 		return seq;
-
 	}
 
 	public static void main(String[] args) {
 		SubtitleSeqFactory s = new SubtitleSeqFactory();
-		System.out.println(s.loadSubtitleSeq("/Users/osama/Desktop/test.srt"));
+		SubtitleSeq sub = s.loadSubtitleSeq("/Users/osama/Desktop/Evils.of.the.Night.1985.720p.BluRay.H264.AAC-RARBG.srt");
+		sub.getSubtitles().findFirst();
+		while(!sub.getSubtitles().last()){
+			System.out.println(sub.getSubtitles().retrieve().getText());
+			sub.getSubtitles().findNext();
+		}
+		System.out.println(sub.getSubtitles().retrieve().getText());
+
+		
 	}
 }
