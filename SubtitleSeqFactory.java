@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class SubtitleSeqFactory {
@@ -21,9 +22,12 @@ public class SubtitleSeqFactory {
 		boolean flag = false;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			while ((line = br.readLine()) != null) { // .equals("")
+			while (((line = br.readLine()) != null)) { // .equals("")
 				flag = false;
 				String text = "";
+				if(line.trim().isEmpty()){
+					return null;
+				}
 				if (Integer.parseInt(line) == seqNum) {
 					seqNum++;
 					if ((line = br.readLine()).matches(timeLinePattern)) {
@@ -37,12 +41,12 @@ public class SubtitleSeqFactory {
 									text += line;
 									last = line;
 								}
+								if(line.trim().isEmpty()){
+									flag = true;
+								}
 							} catch (NullPointerException e) {
 								// this allow the last subtitle to have multiple
 								// text lines.
-							}
-							if(line.trim().isEmpty()){
-								flag = true;
 							}
 						} else {
 							return null;
@@ -66,7 +70,6 @@ public class SubtitleSeqFactory {
 						Integer.parseInt(endTime.substring(9, 12)));
 				SubtitleIm tmp = new SubtitleIm(startTimeObj, endTimeObj, text);
 				seq.addSubtitle(tmp);
-				System.out.println(tmp.getText());
 			}
 
 		} catch (FileNotFoundException e) {
@@ -88,7 +91,14 @@ public class SubtitleSeqFactory {
 
 	public static void main(String[] args) {
 		SubtitleSeqFactory s = new SubtitleSeqFactory();
-		System.out.println(
-				s.loadSubtitleSeq("/Users/osama/Desktop/Evils.of.the.Night.1985.720p.BluRay.H264.AAC-RARBG.srt"));
+		SubtitleSeq sub = s.loadSubtitleSeq("/Users/osama/Desktop/Evils.of.the.Night.1985.720p.BluRay.H264.AAC-RARBG.srt");
+		sub.getSubtitles().findFirst();
+		while(!sub.getSubtitles().last()){
+			System.out.println(sub.getSubtitles().retrieve().getText());
+			sub.getSubtitles().findNext();
+		}
+		System.out.println(sub.getSubtitles().retrieve().getText());
+
+		
 	}
 }
