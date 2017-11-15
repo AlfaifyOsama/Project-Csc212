@@ -25,21 +25,16 @@ public class SubtitleSeqFactory {
 			while (((line = br.readLine()) != null)) { // .equals("")
 				flag = false;
 				String text = "";
-				if(line.trim().isEmpty()){
-					return null;
-				}
 				if (Integer.parseInt(line) == seqNum) {
 					seqNum++;
 					if ((line = br.readLine()).matches(timeLinePattern)) {
 						timeLine = line;
 						if ((!(line = br.readLine()).equals(""))) {
 							text += line;
-							String last = line;
 							try {
 								while (!(line = br.readLine()).equals("")) {
 									text += "\n";
 									text += line;
-									last = line;
 								}
 								if(line.trim().isEmpty()){
 									flag = true;
@@ -76,8 +71,8 @@ public class SubtitleSeqFactory {
 			return null;
 		} catch (IOException e) {
 			return null;
-		} catch (NullPointerException e) {
-
+		} catch (NumberFormatException e) {
+			return null; // this will return null if the first line of any subtitle is not an integer.
 		}
 
 		if (seq.getSubtitles().empty()) {
@@ -91,12 +86,18 @@ public class SubtitleSeqFactory {
 
 	public static void main(String[] args) {
 		SubtitleSeqFactory s = new SubtitleSeqFactory();
-		SubtitleSeq sub = s.loadSubtitleSeq("/Users/osama/Desktop/Evils.of.the.Night.1985.720p.BluRay.H264.AAC-RARBG.srt");
+		SubtitleSeq sub = s.loadSubtitleSeq("/Users/osama/Desktop/Phase-1 (2)/data/winnie-the-pooh-2011.srt");
 		sub.getSubtitles().findFirst();
+		int counter = 1;
 		while(!sub.getSubtitles().last()){
+			System.out.println(counter++);
+			System.out.println("..... --> .....");
 			System.out.println(sub.getSubtitles().retrieve().getText());
+			System.out.println();
 			sub.getSubtitles().findNext();
 		}
+		System.out.println(counter++);
+		System.out.println("..... --> .....");
 		System.out.println(sub.getSubtitles().retrieve().getText());
 
 		
