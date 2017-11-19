@@ -57,7 +57,7 @@ public class SubtitleIm implements Subtitle{
 
 	@Override
 	public String toString() {
-		return "SubtitleIm [StartTime=" + StartTime + ", EndTime=" + EndTime + ", Text=" + Text + "]";
+		return "SubtitleIm [StartTime=" + ((TimeIm)StartTime).timeToMS() + ", EndTime=" + ((TimeIm)EndTime).timeToMS() + ", Text=" + Text + "]";
 	}
 
 	

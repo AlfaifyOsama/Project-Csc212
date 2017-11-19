@@ -17,6 +17,8 @@ public class SubtitleSeqIm implements SubtitleSeq {
 			int startTimeOfSt = ((TimeIm) st.getStartTime()).timeToMS();
 			int startTimeOfCurrent = 0;
 			while (!sub.last()) {
+				if( !(inTime((TimeIm)st.getStartTime()) || inTime(((TimeIm)st.getEndTime()))) )
+					return;
 				startTimeOfCurrent = ((TimeIm) sub.retrieve().getStartTime()).timeToMS();
 				if (startTimeOfSt < startTimeOfCurrent) {
 					break;
@@ -129,24 +131,16 @@ public class SubtitleSeqIm implements SubtitleSeq {
 
 	@Override
 	public List<Subtitle> getSubtitles(String str) {
-		LinkedList<Subtitle> sub2 = new LinkedList<Subtitle>();
+		LinkedList<Subtitle> sub2 = new LinkedList<Subtitle>(); // collection
 		if (!sub.empty()) {// so we can use findfirst
 			sub.findFirst();// have to start from the first element
 			while (!sub.last()) {
-				if (sub.retrieve().getText().contains(str)) // contains return
-															// true if the left
-															// string have a
-															// sub-string of the
-															// right side
-					sub2.insert(sub.retrieve()); // need checking
-													// ************************(regarding
-													// the chronological order)
-				sub.findNext();
+				if (sub.retrieve().getText().contains(str)) 
+					sub2.insert(sub.retrieve()); 
+				sub.findNext(); 
 			}
-			if (sub.retrieve().getText().contains(str)) // checking the last
-														// element
+			if (sub.retrieve().getText().contains(str)) // checking the last	element
 				sub2.insert(sub.retrieve());
-
 		}
 		return sub2;
 	}
@@ -159,7 +153,7 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		while (!sub.last()) {
 			if (sub.retrieve().getText().contains(str)) {
 				sub.remove();
-				continue;
+				
 			}
 			sub.findNext();
 		}
@@ -299,7 +293,7 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		System.out.println(a.toString());
 
 	}
-
+	/*
 	public static void main(String[] args) {
 		SubtitleSeqIm tmp = new SubtitleSeqIm();
 		tmp.addSubtitle(new SubtitleIm(new TimeIm(00, 00, 01, 000), new TimeIm(00, 00, 05, 000), "PEW"));
@@ -319,4 +313,5 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		System.out.println(sub.retrieve().getText());
 
 	}
+	*/
 }

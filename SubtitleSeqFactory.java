@@ -21,7 +21,7 @@ public class SubtitleSeqFactory {
 
 				// Check if it has valid sequential number
 				String seqNumString = in.nextLine();
-				if (!seqNumString.equals("" + seqNum++)) {
+				if (!(seqNumString.equals("" + seqNum++))) {
 					return null;
 				}
 
@@ -63,7 +63,7 @@ public class SubtitleSeqFactory {
 				seq.addSubtitle(tmp);
 
 			}
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) { 
 			return null;
 		}
 		return seq;
@@ -72,6 +72,6 @@ public class SubtitleSeqFactory {
 
 	public static void main(String[] args) {
 		SubtitleSeqFactory s = new SubtitleSeqFactory();
-		System.out.println(s.loadSubtitleSeq("/Users/osama/Desktop/test.srt"));
+		System.out.println(s.loadSubtitleSeq("/Users/Nawif/Downloads/Phase-1/data/winnie-the-pooh-2011.srt"));
 	}
 }
