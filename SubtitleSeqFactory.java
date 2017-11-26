@@ -64,6 +64,10 @@ public class SubtitleSeqFactory {
 						Integer.parseInt(endTime.substring(3, 5)), Integer.parseInt(endTime.substring(6, 8)),
 						Integer.parseInt(endTime.substring(9, 12)));
 				SubtitleIm tmp = new SubtitleIm(startTimeObj, endTimeObj, text);
+				if(((TimeIm)endTimeObj).timeToMS() < ((TimeIm)startTimeObj).timeToMS()){
+					// End time precede start time, return null
+					return null;
+				}
 				seq.addSubtitle(tmp);
 			}
 
