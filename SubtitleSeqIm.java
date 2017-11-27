@@ -100,32 +100,30 @@ public class SubtitleSeqIm implements SubtitleSeq {
 		subWithOrder.findFirst();
 
 		while (!sub.last()) {
+			if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() <= startTimeOFIntrval
+					&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() >= startTimeOFIntrval) {
+				subWithOrder.insert(sub.retrieve());
+				continue;
+			}
 
-			if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
-					&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
-				if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
-						&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
-					if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
-							&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
-						if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
-								&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
-							subWithOrder.insert(sub.retrieve());
-
+			else if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() <= endTimeOFIntrval
+					&& ((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval) {
+				subWithOrder.insert(sub.retrieve());
+				continue;
+			}
+						
 			sub.findNext();
 			subWithOrder.findNext();
 		}
+		if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() <= startTimeOFIntrval
+				&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() >= startTimeOFIntrval) {
+			subWithOrder.insert(sub.retrieve());
+		}
 
-		if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
-				&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
-
-			if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
-					&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() <= endTimeOFIntrval)
-				if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval
-						&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
-					if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() < startTimeOFIntrval
-							&& ((TimeIm) sub.retrieve().getEndTime()).timeToMS() > endTimeOFIntrval)
-						subWithOrder.insert(sub.retrieve());
-
+		else if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() <= endTimeOFIntrval
+				&& ((TimeIm) sub.retrieve().getStartTime()).timeToMS() >= startTimeOFIntrval) {
+			subWithOrder.insert(sub.retrieve());
+		}
 		return subWithOrder;
 	}
 
@@ -235,7 +233,7 @@ public class SubtitleSeqIm implements SubtitleSeq {
 			return;
 		}
 		while (!sub.last()) {
-
+// hi
 			// ----|---|----
 			// ----|-- |
 			if (((TimeIm) sub.retrieve().getStartTime()).timeToMS() <= startTimeOFIntrval
