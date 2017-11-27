@@ -18,7 +18,7 @@ public class SubtitleSeqIm implements SubtitleSeq {
 			int startTimeOfCurrent = 0;
 			while (!sub.last()) {
 				if((inTime((TimeIm)st.getStartTime()) || inTime(((TimeIm)st.getEndTime()))))
-					retrun;
+					return;
 				startTimeOfCurrent = ((TimeIm) sub.retrieve().getStartTime()).timeToMS();
 				if (startTimeOfSt < startTimeOfCurrent) {
 					break;
